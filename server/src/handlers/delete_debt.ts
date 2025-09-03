@@ -1,7 +1,24 @@
-export async function deleteDebt(debtId: number, userId: number): Promise<boolean> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is deleting a debt/loan from the database.
-    // Should validate that the debt exists and belongs to the user before deletion.
-    // Returns true if successfully deleted, false otherwise.
-    return Promise.resolve(true);
-}
+import { db } from '../db';
+import { debtsTable } from '../db/schema';
+import { eq, and } from 'drizzle-orm';
+
+export const deleteDebt = async (debtId: number, userId: number): Promise<boolean> => {
+  try {
+    // Delete the debt record, ensuring it belongs to the user
+    const result = await db.delete(debtsTable)
+      .where(
+        and(
+          eq(debtsTable.id, debtId),
+          eq(debtsTable.user_id, userId)
+        )
+      )
+      .returning({ id: debtsTable.id })
+      .execute();
+
+    // Return true if a record was deleted, false otherwise
+    return result.length > 0;
+  } catch (error) {
+    console.error('Debt deletion failed:', error);
+    throw error;
+  }
+};

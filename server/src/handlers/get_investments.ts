@@ -1,8 +1,25 @@
+import { db } from '../db';
+import { investmentsTable } from '../db/schema';
 import { type Investment } from '../schema';
+import { eq } from 'drizzle-orm';
 
-export async function getInvestments(userId: number): Promise<Investment[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all investments for a specific user from the database.
-    // Should return investments with calculated profit/loss and performance metrics.
-    return Promise.resolve([]);
-}
+export const getInvestments = async (userId: number): Promise<Investment[]> => {
+  try {
+    const results = await db.select()
+      .from(investmentsTable)
+      .where(eq(investmentsTable.user_id, userId))
+      .execute();
+
+    // Convert numeric fields back to numbers and dates to Date objects before returning
+    return results.map(investment => ({
+      ...investment,
+      quantity: parseFloat(investment.quantity),
+      purchase_price: parseFloat(investment.purchase_price),
+      current_value: parseFloat(investment.current_value),
+      purchase_date: new Date(investment.purchase_date)
+    }));
+  } catch (error) {
+    console.error('Failed to fetch investments:', error);
+    throw error;
+  }
+};
