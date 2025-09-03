@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@trpc/server": "npm:@trpc/server@next",
+    "@types/uuid": "^10.0.0",
     "cors": "2.8.5",
     "dotenv": "16.4.7",
     "drizzle-orm": "0.40.0",
     "pg": "8.14.0",
     "superjson": "2.2.2",
+    "uuid": "^11.1.0",
     "zod": "3.24.2"
   },
   "devDependencies": {

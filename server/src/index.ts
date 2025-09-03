@@ -9,6 +9,8 @@ import { z } from 'zod';
 import {
   createUserInputSchema,
   loginUserInputSchema,
+  requestPasswordResetInputSchema,
+  resetPasswordInputSchema,
   createTransactionCategoryInputSchema,
   createTransactionInputSchema,
   updateTransactionInputSchema,
@@ -25,6 +27,8 @@ import {
 // Import handlers
 import { createUser } from './handlers/create_user';
 import { loginUser } from './handlers/login_user';
+import { requestPasswordReset } from './handlers/request_password_reset';
+import { resetPassword } from './handlers/reset_password';
 import { createTransactionCategory } from './handlers/create_transaction_category';
 import { getTransactionCategories } from './handlers/get_transaction_categories';
 import { createTransaction } from './handlers/create_transaction';
@@ -67,6 +71,15 @@ const appRouter = router({
   loginUser: publicProcedure
     .input(loginUserInputSchema)
     .mutation(({ input }) => loginUser(input)),
+
+  // Password Reset
+  requestPasswordReset: publicProcedure
+    .input(requestPasswordResetInputSchema)
+    .mutation(({ input }) => requestPasswordReset(input)),
+  
+  resetPassword: publicProcedure
+    .input(resetPasswordInputSchema)
+    .mutation(({ input }) => resetPassword(input)),
 
   // Transaction Categories
   createTransactionCategory: publicProcedure

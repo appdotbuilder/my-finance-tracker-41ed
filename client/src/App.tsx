@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wallet, TrendingUp, CreditCard, PiggyBank, BarChart3, LogOut, UserPlus, LogIn } from 'lucide-react';
+import { Wallet, TrendingUp, CreditCard, PiggyBank, BarChart3, LogOut, UserPlus, LogIn, KeyRound } from 'lucide-react';
 
 // Components
 import { AuthForm } from './components/AuthForm';
+import { ForgotPasswordForm } from './components/ForgotPasswordForm';
 import { TransactionTracker } from './components/TransactionTracker';
 import { BudgetSystem } from './components/BudgetSystem';
 import { InvestmentTracker } from './components/InvestmentTracker';
@@ -18,7 +19,7 @@ import type { User } from '../../server/src/schema';
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot_password'>('login');
 
   // Check for existing user session (simple localStorage check)
   useEffect(() => {
@@ -64,39 +65,61 @@ function App() {
                     <LogIn className="h-5 w-5" />
                     Welcome Back
                   </>
-                ) : (
+                ) : authMode === 'register' ? (
                   <>
                     <UserPlus className="h-5 w-5" />
                     Create Account
                   </>
+                ) : (
+                  <>
+                    <KeyRound className="h-5 w-5" />
+                    Forgot Password
+                  </>
                 )}
               </CardTitle>
               <CardDescription>
-                {authMode === 'login' 
-                  ? 'Sign in to your account to manage your finances' 
-                  : 'Create an account to start tracking your finances'
+                {authMode === 'login'
+                  ? 'Sign in to your account to manage your finances'
+                  : authMode === 'register'
+                    ? 'Create an account to start tracking your finances'
+                    : 'Enter your email to reset your password'
                 }
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AuthForm 
-                mode={authMode} 
-                onSuccess={handleAuthSuccess}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-              />
+              {authMode === 'forgot_password' ? (
+                <ForgotPasswordForm onBackToLogin={() => setAuthMode('login')} />
+              ) : (
+                <AuthForm 
+                  mode={authMode} 
+                  onSuccess={handleAuthSuccess}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                />
+              )}
               
               <div className="text-center mt-4">
-                <Button
-                  variant="link"
-                  onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
-                  className="text-sm"
-                >
-                  {authMode === 'login' 
-                    ? "Don't have an account? Sign up" 
-                    : "Already have an account? Sign in"
-                  }
-                </Button>
+                {authMode !== 'forgot_password' && (
+                  <Button
+                    variant="link"
+                    onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+                    className="text-sm"
+                  >
+                    {authMode === 'login'
+                      ? "Don't have an account? Sign up"
+                      : "Already have an account? Sign in"
+                    }
+                  </Button>
+                )}
+                {authMode === 'login' && (
+                  <Button
+                    variant="link"
+                    onClick={() => setAuthMode('forgot_password')}
+                    className="text-sm mt-2 block w-full"
+                  >
+                    Forgot password?
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

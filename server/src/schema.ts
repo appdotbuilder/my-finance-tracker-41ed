@@ -29,6 +29,20 @@ export const loginUserInputSchema = z.object({
 
 export type LoginUserInput = z.infer<typeof loginUserInputSchema>;
 
+export const requestPasswordResetInputSchema = z.object({
+  email: z.string().email(),
+});
+
+export type RequestPasswordResetInput = z.infer<typeof requestPasswordResetInputSchema>;
+
+export const resetPasswordInputSchema = z.object({
+  email: z.string().email(),
+  token: z.string().min(1),
+  new_password: z.string().min(8, "Password must be at least 8 characters long"),
+});
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordInputSchema>;
+
 // Transaction Category Schema
 export const transactionCategorySchema = z.object({
   id: z.number(),
